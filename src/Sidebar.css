@@ -18,6 +18,10 @@
     padding-left: 10px;
     cursor: pointer;
 }
+.sidebar__headerAvatar:hover{
+    transition: transform 0.2s ease-in-out;
+    transform: scale(1.1) !important;
+}
 .sidebar__headerRight{
     display: flex;
     cursor: pointer;
@@ -30,6 +34,10 @@
     margin-right: 2vw;
     font-size: 22px !important;
     color: rgb(204, 204, 197) !important;   
+}
+.sidebar__headerRight>.MuiSvgIcon-root:hover{
+    transition: transform 0.2s ease-in-out;
+    transform: scale(1.2) !important;
 }
 
 .sidebar__search{
@@ -67,6 +75,7 @@
 .sidebar__chats{
     flex: 1;
     overflow-y: scroll;   
+    overflow-x: hidden;
 }
 .sidebar__chats::-webkit-scrollbar {
     width: 5px;

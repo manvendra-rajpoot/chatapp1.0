@@ -8,6 +8,8 @@
 }
 .sidebarChat:hover{
     background-color: rgb(71, 76, 78);
+    transition: transform 0.1s ease-in;
+    transform: scale(1.05) !important;
 }
 .sidebarChat__info{
     margin-left: 15px;
