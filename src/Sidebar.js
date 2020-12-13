@@ -8,18 +8,22 @@ import SidebarChat from './SidebarChat';
 import { Avatar } from '@material-ui/core';
 import db from './firebase';
 
+
 function Sidebar() {
     const [rooms,setRooms] = useState([]); 
 
     useEffect(() => {
-        const unsubscribe =  db.collection('rooms').onSnapshot(snapshot => (
-            setRooms(snapshot.docs.map(doc => (
+        const unsubscribe =  db.collection('rooms')
+        .onSnapshot((snapshot) => 
+            setRooms(snapshot.docs.map((doc) => (
                 {
                     id: doc.id,
                     data: doc.data(),
                 }
             )))
-        ))
+        );
+
+        //optimization
         return() => {
             unsubscribe();
         }
