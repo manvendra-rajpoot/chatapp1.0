@@ -5,6 +5,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {AttachFile, InsertEmoticon, MicNoneOutlined, SearchOutlined} from '@material-ui/icons';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import db from './firebase';
+import firebase from 'firebase';
+import { useStateValue } from './StateProvider';
 
 function Chat() {
     //craete random int
@@ -12,7 +14,8 @@ function Chat() {
     const [input,setInput] = useState('');
     const {roomId} = useParams(); //to extract roomId from url
     const [roomName, setRoomName] = useState('');
-
+    const [messages, setMessages] = useState([]);
+    const [{user} , dispatch] = useStateValue();
 
     useEffect(() => {
         setSeed(Math.floor(Math.random()*5000));
@@ -24,12 +27,25 @@ function Chat() {
             .onSnapshot((snapshot) => (
                 setRoomName(snapshot.data().name)
             ));
+
+            db.collection('rooms').doc(roomId)
+            .collection('messages')
+            .orderBy('timestamp', 'asc').onSnapshot((snapshot) => (
+                setMessages(snapshot.docs.map(doc => doc.data()))
+            ));
         }
     }, [roomId]);
 
     const sendMessage = (e) => {
         e.preventDefault();
-        console.log('Typed sms -->>>>>>>',input);
+        // console.log(input);
+        db.collection('rooms').doc(roomId)
+        .collection('messages').add({
+            message: input,
+            name: user.displayName,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+
         setInput('');
     };
 
@@ -42,7 +58,10 @@ function Chat() {
                 </div>
                 <div className='chat__headerInfo'>
                     <h4>{roomName}</h4>
-                    <p>Last seen at...</p>
+                        <p>
+                            last seen{" "}
+                            {new Date(messages[messages.length -1]?.timestamp?.toDate()).toUTCString()}
+                        </p>
                 </div>
                 <div className='chat__headerRight'>
                     <SearchOutlined /> 
@@ -52,78 +71,16 @@ function Chat() {
             </div>         
 
             <div className='chat__body'>
-                <p className={`chat__msg ${true && 'chat__receiver'}`}>
-                    <span className='chat__name'>Manvendra R</span>
-                    Hey Bois
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-               
-                <p className='chat__msg'>
-                    <span className='chat__name'>Devesh R</span>
-                    Heyy Bois!!
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-
-                <p className={`chat__msg ${true && 'chat__receiver'}`}>
-                    <span className='chat__name'>Manvendra R</span>
-                    Hey Bois
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-               
-                <p className='chat__msg'>
-                    <span className='chat__name'>Devesh R</span>
-                    Heyy Bois!!
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-
-                <p className={`chat__msg ${true && 'chat__receiver'}`}>
-                    <span className='chat__name'>Manvendra R</span>
-                    Hey Bois
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-               
-                <p className='chat__msg'>
-                    <span className='chat__name'>Devesh R</span>
-                    Heyy Bois!!
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-
-                <p className={`chat__msg ${true && 'chat__receiver'}`}>
-                    <span className='chat__name'>Manvendra R</span>
-                    Hey Bois
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-               
-                <p className='chat__msg'>
-                    <span className='chat__name'>Devesh R</span>
-                    Heyy Bois!!
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-
-                <p className={`chat__msg ${true && 'chat__receiver'}`}>
-                    <span className='chat__name'>Manvendra R</span>
-                    Hey Bois
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-               
-                <p className='chat__msg'>
-                    <span className='chat__name'>Devesh R</span>
-                    Heyy Bois!!
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-
-                <p className={`chat__msg ${true && 'chat__receiver'}`}>
-                    <span className='chat__name'>Manvendra R</span>
-                    Hey Bois
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-               
-                <p className='chat__msg'>
-                    <span className='chat__name'>Devesh R</span>
-                    Heyy Bois!!
-                    <span className='chat__timestamp'>9:54</span>
-                </p>
-            
+                {messages.map((message) => (
+                        <p className={`chat__msg ${message.name===user.displayName && 'chat__receiver'}`}>
+                        <span className='chat__name'>{message.name}</span>
+                        {message.message}
+                        <span className='chat__timestamp'>
+                            {new Date(message.timestamp?.toDate()).toUTCString()}
+                        </span>
+                        </p>
+                    ))
+                }
             </div>       
 
             <div className='chat__footer'>

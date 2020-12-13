@@ -6,6 +6,9 @@
     color: rgb(235, 235, 235);
     border-bottom: 1px solid rgb(67, 71, 71) ;
 }
+a {
+    text-decoration: none !important;
+}
 .sidebarChat:hover{
     background-color: rgb(71, 76, 78);
     transition: transform 0.1s ease-in;
