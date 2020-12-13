@@ -8,6 +8,9 @@
 #cache
 .eslintcache
 
+#firebase
+/src/firebase.js
+
 # testing
 /coverage
 
