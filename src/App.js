@@ -1,7 +1,8 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense } from 'react';
 import './App.css';
 import {BrowserRouter, Route, Switch} from "react-router-dom/cjs/react-router-dom.min";
 import Login from './Login';
+import { useStateValue } from './StateProvider';
 
 const Sidebar = lazy(() => import('./Sidebar'));
 const Chat = lazy(() => import('./Chat'));
@@ -9,12 +10,11 @@ const Chat = lazy(() => import('./Chat'));
 
 function App() {  
 
-  const [user, setUser] = useState(null);
+  const [{user}, dispatch] = useStateValue();
   
   return (
     <div className="app">
       { (!user) ? (<Login />) : (
-
         <div className='app__body'>
           <BrowserRouter >
             <Suspense fallback={<div className='loading'>Loading...</div>}>
